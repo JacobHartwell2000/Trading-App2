@@ -834,15 +834,19 @@ class TradingBot:
     def get_account_status(self):
         """Get account status and performance metrics"""
         try:
+            # Test Alpaca connection first
             log_activity("Testing Alpaca API connection...")
             if not self.alpaca:
                 log_activity("Alpaca API not initialized", "error")
                 return None
             
+            # Verify API credentials and get account info
             log_activity("Attempting to get account information...")
+            
             account = self.alpaca.get_account()
             log_activity("Successfully retrieved account information")
             
+            # Format the response with explicit type conversion and error handling
             status_data = {
                 'equity': float(account.equity or 0),
                 'cash': float(account.cash or 0),
@@ -853,6 +857,7 @@ class TradingBot:
                 'account_number': account.account_number
             }
             
+            # Validate the data before returning
             for key, value in status_data.items():
                 if key not in ['status', 'currency', 'account_number'] and (not isinstance(value, (int, float)) or np.isnan(value)):
                     log_activity(f"Invalid {key} value: {value}", "error")
@@ -868,14 +873,19 @@ class TradingBot:
     def get_sentiment_analysis(self):
         """Get current market sentiment analysis"""
         try:
+            # Initialize sentiment strategy if not already done
             if not hasattr(self, 'sentiment_strategy'):
                 self.sentiment_strategy = SentimentStrategy()
             
+            # Get sentiment data
             sentiment_data = self.sentiment_strategy.analyze_sentiment()
             
+            # Calculate overall sentiment as weighted average
             if sentiment_data:
                 news_sentiment = sentiment_data.get('news', 0)
                 social_sentiment = sentiment_data.get('social', 0)
+                
+                # Weight news sentiment slightly higher than social
                 overall_sentiment = (news_sentiment * 0.6) + (social_sentiment * 0.4)
                 
                 return {
