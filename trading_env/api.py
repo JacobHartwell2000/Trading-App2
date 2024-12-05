@@ -85,22 +85,16 @@ def get_account_status():
                 'message': 'Trading bot not initialized'
             }), 500
             
-        # Add detailed debug logging
         logging.debug("Bot check passed, attempting to fetch account status")
         log_activity("Fetching account status from Alpaca...")
         
         status = bot.get_account_status()
-        logging.debug(f"Raw account status received: {status}")
+        sentiment_data = bot.get_sentiment_analysis()
         
-        if status is None:
-            logging.error("Received None status from Alpaca")
-            return jsonify({
-                'status': 'error',
-                'message': 'Failed to fetch account status from Alpaca'
-            }), 500
-            
-        # Log successful response
-        logging.debug(f"Returning account status: {status}")
+        if status and sentiment_data:
+            status.update(sentiment_data)
+        
+        logging.debug(f"Returning account status with sentiment: {status}")
         return jsonify({
             'status': 'success',
             'data': status

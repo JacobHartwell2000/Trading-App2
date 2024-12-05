@@ -152,33 +152,33 @@ const Dashboard = () => {
                         <Grid item xs={12} md={4}>
                             <Paper sx={{ p: 2, bgcolor: 'background.default' }}>
                                 <Typography variant="subtitle1">News Sentiment</Typography>
-                                <Typography variant="h4" color={accountData?.data?.newsSentiment > 0 ? 'success.main' : 'error.main'}>
-                                    {accountData?.data?.newsSentiment > 0 ? 'Bullish' : 'Bearish'}
+                                <Typography variant="h4" color={accountData?.newsSentiment > 0 ? 'success.main' : 'error.main'}>
+                                    {accountData?.newsSentiment ? (accountData.newsSentiment > 0 ? 'Bullish' : 'Bearish') : 'Unknown'}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Score: {accountData?.data?.newsSentiment?.toFixed(2) || 'N/A'}
+                                    Score: {accountData?.newsSentiment ? accountData.newsSentiment.toFixed(2) : '0.00'}
                                 </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12} md={4}>
                             <Paper sx={{ p: 2, bgcolor: 'background.default' }}>
                                 <Typography variant="subtitle1">Social Media Sentiment</Typography>
-                                <Typography variant="h4" color={accountData?.data?.socialSentiment > 0 ? 'success.main' : 'error.main'}>
-                                    {accountData?.data?.socialSentiment > 0 ? 'Bullish' : 'Bearish'}
+                                <Typography variant="h4" color={accountData?.socialSentiment > 0 ? 'success.main' : 'error.main'}>
+                                    {accountData?.socialSentiment ? (accountData.socialSentiment > 0 ? 'Bullish' : 'Bearish') : 'Unknown'}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Score: {accountData?.data?.socialSentiment?.toFixed(2) || 'N/A'}
+                                    Score: {accountData?.socialSentiment ? accountData.socialSentiment.toFixed(2) : '0.00'}
                                 </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12} md={4}>
                             <Paper sx={{ p: 2, bgcolor: 'background.default' }}>
                                 <Typography variant="subtitle1">Overall Market Sentiment</Typography>
-                                <Typography variant="h4" color={accountData?.data?.overallSentiment > 0 ? 'success.main' : 'error.main'}>
-                                    {accountData?.data?.overallSentiment > 0 ? 'Bullish' : 'Bearish'}
+                                <Typography variant="h4" color={accountData?.overallSentiment > 0 ? 'success.main' : 'error.main'}>
+                                    {accountData?.overallSentiment ? (accountData.overallSentiment > 0 ? 'Bullish' : 'Bearish') : 'Unknown'}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Score: {accountData?.data?.overallSentiment?.toFixed(2) || 'N/A'}
+                                    Score: {accountData?.overallSentiment ? accountData.overallSentiment.toFixed(2) : '0.00'}
                                 </Typography>
                             </Paper>
                         </Grid>

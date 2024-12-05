@@ -834,43 +834,60 @@ class TradingBot:
     def get_account_status(self):
         """Get account status and performance metrics"""
         try:
-            # Test Alpaca connection first
             log_activity("Testing Alpaca API connection...")
             if not self.alpaca:
                 log_activity("Alpaca API not initialized", "error")
                 return None
             
-            # Verify API credentials and get account info
-            log_activity(f"Using Alpaca API URL: {BASE_URL}")
             log_activity("Attempting to get account information...")
-            
             account = self.alpaca.get_account()
             log_activity("Successfully retrieved account information")
             
-            # Format the response with explicit type conversion and error handling
             status_data = {
                 'equity': float(account.equity or 0),
                 'cash': float(account.cash or 0),
                 'buying_power': float(account.buying_power or 0),
                 'portfolio_value': float(account.portfolio_value or 0),
-                'day_trade_count': int(account.daytrade_count or 0),
-                'market_status': 'open' if self.alpaca.get_clock().is_open else 'closed'
+                'status': account.status,
+                'currency': account.currency,
+                'account_number': account.account_number
             }
             
-            # Validate the data before returning
             for key, value in status_data.items():
-                if key != 'market_status' and (not isinstance(value, (int, float)) or np.isnan(value)):
+                if key not in ['status', 'currency', 'account_number'] and (not isinstance(value, (int, float)) or np.isnan(value)):
                     log_activity(f"Invalid {key} value: {value}", "error")
                     status_data[key] = 0
             
-            log_activity("Account status data formatted", "info", status_data)
+            log_activity("Account status data formatted successfully")
             return status_data
             
-        except tradeapi.rest.APIError as e:
-            log_activity(f"Alpaca API Error: {str(e)}", "error")
-            return None
         except Exception as e:
-            log_activity(f"Error fetching account status: {str(e)}", "error")
+            log_activity(f"Error getting account status: {str(e)}", "error")
+            return None
+
+    def get_sentiment_analysis(self):
+        """Get current market sentiment analysis"""
+        try:
+            if not hasattr(self, 'sentiment_strategy'):
+                self.sentiment_strategy = SentimentStrategy()
+            
+            sentiment_data = self.sentiment_strategy.analyze_sentiment()
+            
+            if sentiment_data:
+                news_sentiment = sentiment_data.get('news', 0)
+                social_sentiment = sentiment_data.get('social', 0)
+                overall_sentiment = (news_sentiment * 0.6) + (social_sentiment * 0.4)
+                
+                return {
+                    'news': news_sentiment,
+                    'social': social_sentiment,
+                    'overall': overall_sentiment
+                }
+            
+            return None
+            
+        except Exception as e:
+            log_activity(f"Error getting sentiment analysis: {str(e)}", "error")
             return None
 
 def main():
